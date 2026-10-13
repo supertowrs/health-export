@@ -1,6 +1,6 @@
-"""Receptor de prueba: python3 receiver.py [puerto] [token]
+"""Test receiver: python3 receiver.py [port] [token]
 
-Guarda el texto de cada POST en ./received/ y responde 401 si el token Bearer no coincide.
+Saves the text of each POST to ./received/ and answers 401 if the Bearer token doesn't match.
 """
 import json
 import sys

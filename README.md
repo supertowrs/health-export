@@ -10,7 +10,7 @@ An iOS app that sends a daily plain-text summary of your Apple Health data to a 
 - The request body is `{"text": "…"}`, usually 500–1,000 characters, sent with Bearer, Basic or no authentication.
 - A preview screen shows exactly what will be sent. "Send summary now" and "Test connection" buttons cover manual runs.
 
-The app UI and the summary are in Spanish. See [`ejemplo-resumen.txt`](ejemplo-resumen.txt) for a sample and [`FORMATO.md`](FORMATO.md) for the full description.
+The app UI and the summary are in Spanish. See [`example-summary.txt`](example-summary.txt) for a sample and [`FORMAT.md`](FORMAT.md) for the full description.
 
 ## Build
 
@@ -30,4 +30,4 @@ Set your own `DEVELOPMENT_TEAM` and bundle identifier in `project.yml` before bu
 python3 receiver.py 8787 mysecret
 ```
 
-It prints each summary, saves it to `received/` and answers 401 if the Bearer token doesn't match. In the simulator, the "Insertar datos de prueba" button adds sample steps, heart rate and a night of sleep.
+It prints each summary, saves it to `received/` and answers 401 if the Bearer token doesn't match. In the simulator, the "Insertar datos de prueba" (insert test data) button adds sample steps, heart rate and a night of sleep.

@@ -1,6 +1,6 @@
 import HealthKit
 
-/// Texto del resumen de un día: actividad, corazón, etc. de ese día y el sueño de la noche siguiente.
+/// Text summary of a day: activity, heart, etc. for that day plus the sleep of the following night.
 enum Report {
     private static let locale = Locale(identifier: "es_ES")
 
@@ -31,8 +31,8 @@ enum Report {
         return lines.joined(separator: "\n")
     }
 
-    /// Suma (pasos, energía…) o media/mínimo/máximo (pulso, peso…). HealthKit ya descuenta
-    /// los solapes entre iPhone y Watch, igual que la app Salud.
+    /// Sum (steps, energy…) or average/min/max (heart rate, weight…). HealthKit already removes
+    /// the overlap between iPhone and Watch, just like the Health app.
     private static func quantity(_ type: ExportType, _ quantityType: HKQuantityType, _ predicate: NSPredicate) async throws -> [String] {
         let cumulative = quantityType.aggregationStyle == .cumulative
         let descriptor = HKStatisticsQueryDescriptor(
@@ -70,7 +70,7 @@ enum Report {
         }
     }
 
-    /// Sueño que empieza entre el mediodía del día y el del día siguiente.
+    /// Sleep that starts between noon on the day and noon on the next day.
     private static func sleep(after day: Date) async throws -> [String] {
         let calendar = Calendar.current
         let start = calendar.date(byAdding: .hour, value: 12, to: day)!
@@ -81,7 +81,7 @@ enum Report {
             sortDescriptors: [SortDescriptor(\.startDate)])
         let all = try await descriptor.result(for: Health.store)
 
-        // iPhone, Watch y otras apps pueden registrar la misma noche: se usa la fuente con más tiempo dormido.
+        // iPhone, Watch and other apps can record the same night: use the source with the most time asleep.
         let asleepValues = HKCategoryValueSleepAnalysis.allAsleepValues.map(\.rawValue)
         func asleep(_ samples: [HKCategorySample]) -> [HKCategorySample] { samples.filter { asleepValues.contains($0.value) } }
         let bySource = Dictionary(grouping: all, by: \.sourceRevision.source.bundleIdentifier).values
@@ -109,7 +109,7 @@ enum Report {
         return lines
     }
 
-    /// Horas de pie, minutos de atención plena y avisos de pulso.
+    /// Stand hours, mindful minutes and heart rate notifications.
     private static func events(_ type: ExportType, _ predicate: NSPredicate) async throws -> [String] {
         guard let categoryType = type.sampleType as? HKCategoryType else { return [] }
         let descriptor = HKSampleQueryDescriptor(predicates: [.categorySample(type: categoryType, predicate: predicate)], sortDescriptors: [])
@@ -125,9 +125,9 @@ enum Report {
         }
     }
 
-    // MARK: - Formato
+    // MARK: - Formatting
 
-    /// "6,2 km", "97 %", "54 lpm"… (HealthKit guarda los porcentajes de 0 a 1).
+    /// "6,2 km", "97 %", "54 lpm"… (HealthKit stores percentages from 0 to 1).
     private static func format(_ quantity: HKQuantity, _ type: ExportType, unit: Bool = true) -> String {
         guard let hkUnit = type.unit else { return "" }
         let value = quantity.doubleValue(for: hkUnit) * (hkUnit.unitString == "%" ? 100 : 1)

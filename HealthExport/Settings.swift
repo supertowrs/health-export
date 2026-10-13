@@ -22,7 +22,7 @@ struct ExportError: LocalizedError {
     init(_ message: String) { errorDescription = message }
 }
 
-/// Instantánea de los ajustes guardados en UserDefaults (la UI los edita con @AppStorage).
+/// Snapshot of the settings stored in UserDefaults (the UI edits them through @AppStorage).
 struct Config {
     let endpoint: String
     let authMode: AuthMode
@@ -60,7 +60,7 @@ struct Config {
         Catalog.all.filter { enabledTypes.contains($0.id) }
     }
 
-    /// Hora de hoy a partir de la cual se envía el resumen automático.
+    /// Time today from which the automatic summary is sent.
     var sendTime: Date {
         Calendar.current.date(bySettingHour: sendHour, minute: 0, second: 0, of: Date())!
     }

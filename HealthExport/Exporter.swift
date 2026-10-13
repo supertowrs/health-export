@@ -1,11 +1,11 @@
 import HealthKit
 import UIKit
 
-/// Envía una vez al día, como texto, el resumen del día anterior.
+/// Sends the previous day's summary as text, once a day.
 actor Exporter {
     static let shared = Exporter()
 
-    /// Si el iPhone lleva días sin enviar, se recuperan como mucho estos días (un envío por día).
+    /// If the iPhone hasn't sent for a while, at most this many days are caught up (one request per day).
     private static let maxCatchUpDays = 7
 
     private var running = false
@@ -23,8 +23,8 @@ actor Exporter {
         let config = Config.load()
         var days = [Report.yesterday]
         if trigger != "manual" {
-            // Automático: a partir de la hora elegida, con destino configurado y el iPhone
-            // desbloqueado (si no, HealthKit no deja leer). Manda los días que falten hasta ayer.
+            // Automatic: after the chosen time, with an endpoint set and the iPhone unlocked
+            // (otherwise HealthKit can't be read). Sends every missing day up to yesterday.
             guard !config.endpoint.isEmpty, Date() >= config.sendTime,
                   await MainActor.run(body: { UIApplication.shared.isProtectedDataAvailable }) else { return }
             days = pendingDays()
@@ -52,7 +52,7 @@ actor Exporter {
         }
     }
 
-    /// Días desde el último resumen enviado hasta ayer (solo ayer si nunca se ha enviado).
+    /// Days from the last sent summary up to yesterday (just yesterday if nothing was sent yet).
     private func pendingDays() -> [Date] {
         let calendar = Calendar.current
         let yesterday = Report.yesterday

@@ -16,8 +16,8 @@ enum Health {
         }
     }
 
-    /// Pide a HealthKit que despierte la app cuando haya datos nuevos de los tipos activados.
-    /// Debe llamarse en cada arranque (también los arranques en segundo plano).
+    /// Asks HealthKit to wake the app when there is new data for the enabled types.
+    /// Must be called on every launch (background launches too).
     static func startObserving() {
         let config = Config.load()
         let enabled = config.enabledExportTypes
@@ -42,8 +42,8 @@ enum Health {
         }
     }
 
-    /// Respaldo por si HealthKit no despierta la app: refresco en segundo plano de iOS
-    /// a la hora del resumen (hoy si aún no se ha enviado, si no mañana).
+    /// Fallback in case HealthKit doesn't wake the app: an iOS background refresh at the
+    /// summary time (today if it hasn't been sent yet, otherwise tomorrow).
     static func scheduleRefresh() {
         let request = BGAppRefreshTaskRequest(identifier: refreshTaskID)
         let sendTime = Config.load().sendTime
@@ -67,7 +67,7 @@ enum Health {
                                             quantity: HKQuantity(unit: .count().unitDivided(by: .minute()), doubleValue: .random(in: 55...120).rounded()),
                                             start: start, end: start))
         }
-        // Una noche con fases, de 22:00 de ayer a unas 06:30 de hoy.
+        // A night with sleep stages, from 22:00 yesterday to about 06:30 today.
         var start = Calendar.current.startOfDay(for: now).addingTimeInterval(-2 * 3600)
         let stages: [(HKCategoryValueSleepAnalysis, Double)] = [
             (.asleepCore, 50), (.asleepDeep, 60), (.asleepCore, 70), (.asleepREM, 30), (.awake, 8),
@@ -79,7 +79,7 @@ enum Health {
             start = end
         }
         do {
-            // Sustituye los datos de prueba anteriores para que no se acumulen.
+            // Replace earlier test data so it doesn't pile up.
             for type in shareTypes {
                 _ = try await store.deleteObjects(of: type, predicate: HKQuery.predicateForObjects(from: .default()))
             }

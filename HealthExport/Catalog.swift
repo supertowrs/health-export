@@ -1,11 +1,11 @@
 import HealthKit
 
-/// Un tipo de dato de Salud que puede ir en el resumen. `id` es la clave con la que se guarda la selección.
+/// A Health data type that can go in the summary. `id` is the key the selection is stored under.
 struct ExportType: Identifiable {
     let id: String
     let name: String
     let sampleType: HKSampleType
-    /// Unidad en la que se muestran los valores (solo tipos de cantidad).
+    /// Unit the values are shown in (quantity types only).
     let unit: HKUnit?
 }
 
