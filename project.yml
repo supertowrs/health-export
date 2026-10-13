@@ -1,0 +1,41 @@
+name: HealthExport
+options:
+  bundleIdPrefix: me.daviddelatorre
+  deploymentTarget:
+    iOS: "17.0"
+settings:
+  base:
+    DEVELOPMENT_TEAM: 69XQ5XJ2MY
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  HealthExport:
+    type: application
+    platform: iOS
+    sources: [HealthExport]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: me.daviddelatorre.healthexport
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    entitlements:
+      path: HealthExport/HealthExport.entitlements
+      properties:
+        com.apple.developer.healthkit: true
+        com.apple.developer.healthkit.access: []
+        com.apple.developer.healthkit.background-delivery: true
+    info:
+      path: HealthExport/Info.plist
+      properties:
+        CFBundleDisplayName: Health Export
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        NSHealthShareUsageDescription: Lee tus datos de Salud para enviarlos a tu endpoint.
+        NSHealthUpdateUsageDescription: Solo se usa en el simulador para insertar datos de prueba.
+        NSLocalNetworkUsageDescription: Permite enviar los datos a un endpoint de tu red local.
+        NSAppTransportSecurity:
+          NSAllowsArbitraryLoads: true
+        UIBackgroundModes: [fetch]
+        BGTaskSchedulerPermittedIdentifiers: [me.daviddelatorre.healthexport.refresh]
